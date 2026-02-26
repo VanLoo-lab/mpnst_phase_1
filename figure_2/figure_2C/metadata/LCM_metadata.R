@@ -53,8 +53,7 @@ sample_names <- sub("^allele_freq_(.*)_L00[567]\\.rds$", "\\1", basename(files))
 # replace old logic with these sample names
 LCM_asCN_profile_samples <- data.frame(
   sample = sample_names,
-  CN_profile = "Yes",
-  stringsAsFactors = FALSE
+  CN_profile = "Yes"
 )
 
 

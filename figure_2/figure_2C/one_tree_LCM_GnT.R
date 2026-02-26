@@ -183,95 +183,95 @@ dev.off()
 ####################################################################################################################################
 
 #Prune
-for (sample in c("P", "R1", "R4")) {
-  plot_height = round(length(unlist(Descendants(SNV_medicc_tree_add,  SNV_medicc_info[which(SNV_medicc_info$name == sample), "node"], type = "tips")))/length(SNV_medicc_tree_add[["tip.label"]])*35)
-  
-  SNV_medicc_ggtree_sub <- tree_subset(tree = SNV_medicc_tree_groups, node = sample, levels_back = 0)
-  if (sample == "P") {
-    sub_node_names <- c("P", "P_1", "P_2", "P_3")
-  } else {
-    if (sample == "R1") {
-      sub_node_names <- c("R1", "R1_2", "R1_3", "R1_4")
-    } else{
-      sub_node_names <- c("R4", "R4_1", "R4_2", "R4_3")
-    }
-  }
-  
-  SNV_medicc_sub_info <- data.frame(node = unlist(lapply(sub_node_names, function(n) {which(as_tibble(SNV_medicc_ggtree_sub)$label == n)})),
-                                    name = sub_node_names,
-                                    fill_col = node_colours[sub_node_names],
-                                    SNV_branch = "SNV_T", stringsAsFactors = F) %>% arrange(name) #Anndata for trunk branches
-  
-  ####################################################################################################################################
-  
-  ### Some error fix
-  
-  # SNV_medicc_sub_info <- rbind(SNV_medicc_sub_info, anti_join(data.frame(node = SNV_medicc_ggtree_sub@data$node,
-  #                                                                        name = NA,
-  #                                                                        fill_col = NA,
-  #                                                                        SNV_branch = "SNV_F") ,SNV_medicc_sub_info, by = "node")) #Add non trunk branches
-  # SNV_medicc_sub_info[SNV_medicc_sub_info$node %in% c(1),"SNV_branch"] <- "SNV_T" #Change root branch to SNV too #don't need this when pruned
-  
-  #get the node vector from the subset object safely
-  sub_nodes <- NULL
-  if (!is.null(SNV_medicc_ggtree_sub$data)) {                 # if it's a ggtree plot
-    sub_nodes <- SNV_medicc_ggtree_sub$data$node
-  } else if (!is.null(SNV_medicc_ggtree_sub@data$node)) {     # if it's treedata with @data
-    sub_nodes <- SNV_medicc_ggtree_sub@data$node
-  } else {
-    # fallback: fortify
-    sub_nodes <- ggtree::fortify(SNV_medicc_ggtree_sub)$node
-  }
-  #sub_nodes <- SNV_medicc_ggtree_sub@data$node
-  
-  missing_df <- tibble::tibble(
-    node = sub_nodes,
-    name = rep(NA_character_, length(sub_nodes)),
-    fill_col = rep(NA_character_, length(sub_nodes)),
-    SNV_branch = rep("SNV_F", length(sub_nodes))
-  )
-  
-  # SNV_medicc_sub_info <- dplyr::bind_rows(
-  #   SNV_medicc_sub_info,
-  #   dplyr::anti_join(missing_df, SNV_medicc_sub_info, by = "node")
-  # )
-  
-  sub_df <- as_tibble(SNV_medicc_ggtree_sub)
-  
-  SNV_medicc_sub_info <- tibble::tibble(
-    node = sapply(sub_node_names, function(n) sub_df$node[sub_df$label == n][1]),
-    name = sub_node_names,
-    fill_col = unname(node_colours[sub_node_names]),
-    SNV_branch = "SNV_T"
-  ) %>% dplyr::arrange(name)
-
-  
-  
-  ####################################################################################################################################
-  
-  
-  pdf(file = paste0(OUTPUTDIR, "/SNV_medicc_10X_",tree,"_tree_ggtree_scale",scaling_ratio,"_sized_nodelab_reorder_side_", sample, ".pdf"), width = 10, height = plot_height)
-  SNV_medicc_ggtree <- ggtree(SNV_medicc_ggtree_sub, aes(color = SNV_branch, size = SNV_branch))
-  print(SNV_medicc_ggtree %<+% SNV_medicc_sub_info + geom_tippoint(aes(colour = Side, shape = Type, size = Type)) + xlim(0,150) + 
-          scale_color_manual(values = c("grey", hcl(h = seq(15, 375, length = 3 + 1), l = 65, c = 100)[-4], "black", "black"), labels = c("", "Back", "Front", "Side")) +
-          scale_size_manual(values = c(1,3,0.3,2), labels = c("10X", "LCM", "SNV", "CNA")) +
-          scale_shape_manual(values = c(19,15)) +
-          geom_nodelab(aes(label = name, fill = name), geom = "label", size = 3) + scale_fill_manual(values=SNV_medicc_sub_info$fill_col,  labels=SNV_medicc_sub_info$name) +
-          guides(color = "none", size = guide_legend(title = "Branch Type"), fill = guide_legend(title = "Subclone", override.aes = aes(label = ""))) + theme_tree2(), 
-        SNV_medicc_sub_info[which(SNV_medicc_sub_info$name == sample), "node"]) 
-  dev.off()
-  
-  pdf(file = paste0(OUTPUTDIR, "/SNV_medicc_10X_",tree,"_tree_ggtree_scale",scaling_ratio,"_sized_nodelab_reorder_LCM_", sample, ".pdf"), width = 10, height = plot_height)
-  SNV_medicc_ggtree <- ggtree(SNV_medicc_ggtree_sub, aes(color = SNV_branch, size = SNV_branch))
-  print(SNV_medicc_ggtree %<+% SNV_medicc_sub_info + geom_tippoint(aes(colour = LCM_region, shape = Type, size = Type)) + xlim(0,150) + 
-          scale_color_manual(values = c(SNV_medicc_tree_colours[c(1,which(names(SNV_medicc_tree_colours) == sample))],"black", "black"), labels = c("diploid", sample, "yes")) +
-          scale_size_manual(values = c(1,3,0.3,2), labels = c("10X", "LCM", "SNV", "CNA")) +
-          scale_shape_manual(values = c(19,15)) +
-          geom_nodelab(aes(label = name, fill = name), geom = "label", size = 3) + scale_fill_manual(values=SNV_medicc_sub_info$fill_col,  labels=SNV_medicc_sub_info$name) +
-          guides(color = "none", size = guide_legend(title = "Branch Type"), fill = guide_legend(title = "Subclone", override.aes = aes(label = ""))) + theme_tree2(),
-        SNV_medicc_info[which(SNV_medicc_sub_info$name == sample), "node"])
-  dev.off()
-}
+# for (sample in c("P", "R1", "R4")) {
+#   plot_height = round(length(unlist(Descendants(SNV_medicc_tree_add,  SNV_medicc_info[which(SNV_medicc_info$name == sample), "node"], type = "tips")))/length(SNV_medicc_tree_add[["tip.label"]])*35)
+#   
+#   SNV_medicc_ggtree_sub <- tree_subset(tree = SNV_medicc_tree_groups, node = sample, levels_back = 0)
+#   if (sample == "P") {
+#     sub_node_names <- c("P", "P_1", "P_2", "P_3")
+#   } else {
+#     if (sample == "R1") {
+#       sub_node_names <- c("R1", "R1_2", "R1_3", "R1_4")
+#     } else{
+#       sub_node_names <- c("R4", "R4_1", "R4_2", "R4_3")
+#     }
+#   }
+#   
+#   SNV_medicc_sub_info <- data.frame(node = unlist(lapply(sub_node_names, function(n) {which(as_tibble(SNV_medicc_ggtree_sub)$label == n)})),
+#                                     name = sub_node_names,
+#                                     fill_col = node_colours[sub_node_names],
+#                                     SNV_branch = "SNV_T", stringsAsFactors = F) %>% arrange(name) #Anndata for trunk branches
+#   
+#   ####################################################################################################################################
+#   
+#   ### Some error fix
+#   
+#   # SNV_medicc_sub_info <- rbind(SNV_medicc_sub_info, anti_join(data.frame(node = SNV_medicc_ggtree_sub@data$node,
+#   #                                                                        name = NA,
+#   #                                                                        fill_col = NA,
+#   #                                                                        SNV_branch = "SNV_F") ,SNV_medicc_sub_info, by = "node")) #Add non trunk branches
+#   # SNV_medicc_sub_info[SNV_medicc_sub_info$node %in% c(1),"SNV_branch"] <- "SNV_T" #Change root branch to SNV too #don't need this when pruned
+#   
+#   #get the node vector from the subset object safely
+#   sub_nodes <- NULL
+#   if (!is.null(SNV_medicc_ggtree_sub$data)) {                 # if it's a ggtree plot
+#     sub_nodes <- SNV_medicc_ggtree_sub$data$node
+#   } else if (!is.null(SNV_medicc_ggtree_sub@data$node)) {     # if it's treedata with @data
+#     sub_nodes <- SNV_medicc_ggtree_sub@data$node
+#   } else {
+#     # fallback: fortify
+#     sub_nodes <- ggtree::fortify(SNV_medicc_ggtree_sub)$node
+#   }
+#   #sub_nodes <- SNV_medicc_ggtree_sub@data$node
+#   
+#   missing_df <- tibble::tibble(
+#     node = sub_nodes,
+#     name = rep(NA_character_, length(sub_nodes)),
+#     fill_col = rep(NA_character_, length(sub_nodes)),
+#     SNV_branch = rep("SNV_F", length(sub_nodes))
+#   )
+#   
+#   # SNV_medicc_sub_info <- dplyr::bind_rows(
+#   #   SNV_medicc_sub_info,
+#   #   dplyr::anti_join(missing_df, SNV_medicc_sub_info, by = "node")
+#   # )
+#   
+#   sub_df <- as_tibble(SNV_medicc_ggtree_sub)
+#   
+#   SNV_medicc_sub_info <- tibble::tibble(
+#     node = sapply(sub_node_names, function(n) sub_df$node[sub_df$label == n][1]),
+#     name = sub_node_names,
+#     fill_col = unname(node_colours[sub_node_names]),
+#     SNV_branch = "SNV_T"
+#   ) %>% dplyr::arrange(name)
+# 
+#   
+#   
+#   ####################################################################################################################################
+#   
+#   
+#   pdf(file = paste0(OUTPUTDIR, "/SNV_medicc_10X_",tree,"_tree_ggtree_scale",scaling_ratio,"_sized_nodelab_reorder_side_", sample, ".pdf"), width = 10, height = plot_height)
+#   SNV_medicc_ggtree <- ggtree(SNV_medicc_ggtree_sub, aes(color = SNV_branch, size = SNV_branch))
+#   print(SNV_medicc_ggtree %<+% SNV_medicc_sub_info + geom_tippoint(aes(colour = Side, shape = Type, size = Type)) + xlim(0,150) + 
+#           scale_color_manual(values = c("grey", hcl(h = seq(15, 375, length = 3 + 1), l = 65, c = 100)[-4], "black", "black"), labels = c("", "Back", "Front", "Side")) +
+#           scale_size_manual(values = c(1,3,0.3,2), labels = c("10X", "LCM", "SNV", "CNA")) +
+#           scale_shape_manual(values = c(19,15)) +
+#           geom_nodelab(aes(label = name, fill = name), geom = "label", size = 3) + scale_fill_manual(values=SNV_medicc_sub_info$fill_col,  labels=SNV_medicc_sub_info$name) +
+#           guides(color = "none", size = guide_legend(title = "Branch Type"), fill = guide_legend(title = "Subclone", override.aes = aes(label = ""))) + theme_tree2(), 
+#         SNV_medicc_sub_info[which(SNV_medicc_sub_info$name == sample), "node"]) 
+#   dev.off()
+#   
+#   pdf(file = paste0(OUTPUTDIR, "/SNV_medicc_10X_",tree,"_tree_ggtree_scale",scaling_ratio,"_sized_nodelab_reorder_LCM_", sample, ".pdf"), width = 10, height = plot_height)
+#   SNV_medicc_ggtree <- ggtree(SNV_medicc_ggtree_sub, aes(color = SNV_branch, size = SNV_branch))
+#   print(SNV_medicc_ggtree %<+% SNV_medicc_sub_info + geom_tippoint(aes(colour = LCM_region, shape = Type, size = Type)) + xlim(0,150) + 
+#           scale_color_manual(values = c(SNV_medicc_tree_colours[c(1,which(names(SNV_medicc_tree_colours) == sample))],"black", "black"), labels = c("diploid", sample, "yes")) +
+#           scale_size_manual(values = c(1,3,0.3,2), labels = c("10X", "LCM", "SNV", "CNA")) +
+#           scale_shape_manual(values = c(19,15)) +
+#           geom_nodelab(aes(label = name, fill = name), geom = "label", size = 3) + scale_fill_manual(values=SNV_medicc_sub_info$fill_col,  labels=SNV_medicc_sub_info$name) +
+#           guides(color = "none", size = guide_legend(title = "Branch Type"), fill = guide_legend(title = "Subclone", override.aes = aes(label = ""))) + theme_tree2(),
+#         SNV_medicc_info[which(SNV_medicc_sub_info$name == sample), "node"])
+#   dev.off()
+# }
 
 
 
