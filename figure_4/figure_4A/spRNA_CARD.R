@@ -14,7 +14,7 @@ library(CARD)
 samples = c("Pa", "R1", "R3", "Pb", "R2", "R4", "R5a", "R5b")
 names(samples) = c("VER683A1", "VER683A2", "VER683A3", "VER683A4", "VER683A5", "VER683A6", "VER683A7", "VER683A8")
 
-OUTPUTDIR <- "~/Documents/GitHub/MPNST-Zenodo/figure_4/results/figure_1A/"
+OUTPUTDIR <- "~/Documents/GitHub/MPNST-Zenodo/figure_4/results/figure_4A/"
 INPUTDIR <- "~/Documents/GitHub/MPNST-Zenodo/figure_4/data/"
 
 output.dir <- OUTPUTDIR
