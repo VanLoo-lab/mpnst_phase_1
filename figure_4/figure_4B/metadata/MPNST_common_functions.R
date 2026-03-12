@@ -60,6 +60,66 @@ sc_totCN_heatmap <- function(CN_mtx, hclust = F, km = NULL, row_split = NULL, pr
 # test_mtx <- matrix(c(rep(0,10),rep(6,10),rep(2,10),rep(1,10),rep(5,10),rep(8,10)), ncol = 10)
 # sc_totCN_heatmap(test_mtx, probes = c(1:10))
 
+### Adapted function form Alex Stein
+sc_totCN_heatmap2 <- function(CN_mtx, hclust = F, km = NULL, row_split = NULL, probes, row_ann = NULL, max_CN = 10, column_title = "Single Cell Copy Number Heatmap", title = "Total copy number state", 
+                              colour_scheme = c("#00008B", "#7B7BC3", "#FFFFFF", "#FFCCCC", "#FF8080", "#FF3333", "#E60000", "#B31000", "#8B0000", "#660000", "#330000")) {
+  show_raw_dend = T
+  if (!is.null(km)) {
+    hclust = T
+    show_raw_dend = F
+  } #Cluster each kmeans cluster but don't show dendrogram
+  CN_mtx[CN_mtx<0] <- 0 #set min CN value
+  CN_mtx[CN_mtx>max_CN] <- max_CN #set max CN value
+  names(colour_scheme) <- 0:max_CN #Colours
+  #CN_labels <- paste0(0:max_CN, " ")[which(names(colour_scheme) %in% sort(unique(as.numeric(CN_mtx))))] #Get labels in legend
+  CN_at <- intersect(0:max_CN, sort(unique(as.numeric(CN_mtx))))
+  CN_labels <- paste0(CN_at, " ")
+  #Annotation
+  ha_column = HeatmapAnnotation(odd = anno_empty(border = F),
+                                even = anno_empty(border = F)) #Chromosome annotation at bottom
+  ComplexHeatmap::draw(ComplexHeatmap::Heatmap(matrix = CN_mtx, cluster_rows = hclust, row_km = km, row_split = row_split, cluster_row_slices = FALSE, show_row_dend = show_raw_dend, 
+                                               row_title_rot = 0, cluster_columns = F, show_row_names = F, show_column_names = F, row_title_gp = grid::gpar(fontsize = 24),
+                                               heatmap_legend_param = list(at = CN_at, labels = CN_labels, title_gp = gpar(fontsize = 24), labels_gp = gpar(fontsize = 20), grid_height = unit(0.8, "cm"), grid_width = unit(0.8, "cm"), border = "black", nrow=1),
+                                               use_raster = FALSE,
+                                               bottom_annotation = ha_column, left_annotation = row_ann, col = colour_scheme, column_title = column_title, name = title),
+                       heatmap_legend_side="bottom", annotation_legend_side="bottom")
+  #Add chr lines
+  probes <- c(0, probes) #Adds posiiton zero for start of first chromosome
+  decorate_heatmap_body(heatmap = title, {
+    for (k in 1:(length(probes))) {
+      grid.lines(x=probes[k]/ncol(CN_mtx), y=c(0,1), gp=gpar(col="black", lty = 1, lwd = 1.5))
+    }
+  }) #Chr lines
+  if (!is.null(row_split)) {
+    for (i in 2:length(unique(row_split))) {
+      decorate_heatmap_body(heatmap = title, row_slice = i, {
+        for (k in 1:(length(probes))) {
+          grid.lines(x=probes[k]/ncol(CN_mtx), y=c(0,1.1), gp=gpar(col="black", lty = 1, lwd = 1.5))
+        }
+      }) #Chr lines
+    }
+  }
+  if (!is.null(km)) {
+    for (i in 2:K) {
+      decorate_heatmap_body(heatmap = title, row_slice = i, {
+        for (k in 1:(length(probes))) {
+          grid.lines(x=probes[k]/ncol(CN_mtx), y=c(0,1.1), gp=gpar(col="black", lty = 1, lwd = 1.5))
+        }
+      }) #Chr lines
+    }
+  }
+  decorate_annotation(annotation = "odd", {
+    for (k in 2:(length(probes))) {
+      if (k%%2 == 0) {grid.text(names(probes)[k], x=((probes[k-1]+((probes[k]-probes[k-1])/2))/ncol(CN_mtx)) + 0.001, y=0.5, just = "left", gp=gpar(cex = 3))}
+    }
+  }) #Chr numbers
+  decorate_annotation(annotation = "even", {
+    for (k in 2:(length(probes))) {
+      if (k%%2 == 1) {grid.text(names(probes)[k], x=((probes[k-1]+((probes[k]-probes[k-1])/2))/ncol(CN_mtx)) + 0.001, y=0.5, just = "left", gp=gpar(cex = 3))}
+    }
+  }) #Chr numbers
+}
+
 ############################################################
 #Plot asCN heatmap function 
 ############################################################

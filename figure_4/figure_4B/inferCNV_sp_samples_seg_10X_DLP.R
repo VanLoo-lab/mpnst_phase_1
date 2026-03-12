@@ -71,6 +71,7 @@ disc_mtx <- function(mtx, breaks, labels) {
 }
 
 #Load spatial
+input.dir <- paste0(INPUTDIR, "10X_spatial/")
 if (T) {
   MPNST_sp_markers <- readRDS(paste0(input.dir, "MPNST_sp_markers.rds"))
   for (s in visium_samples) {
@@ -92,23 +93,23 @@ if (!file.exists("MPNST_R1_ref_CN.rds")) {
   scDNA_CN_mtx <- readRDS(paste0(all_10X_DLP.dir, "MPNST_all_CN_mtx_mpcf_5.rds"))
   
   #Plot R1_1
-  png(filename = paste0("MPNST_scDNA_CN_K",run,"_R1_2.png"), width = 4000, height = 1000, res = 200)
-  
-  ha_row = rowAnnotation(df = data.frame(Region = gsub("_.*", "", rownames(scDNA_CN_mtx[scDNA_CN_cluster_ids[["R1_2"]],])),
-                                         Tech = gsub(".*_(10X|DLP)_.*", "\\1", rownames(scDNA_CN_mtx[scDNA_CN_cluster_ids[["R1_2"]],]))),
-                         col = list(Region = c("R1" = "#B79F00", "R2" = "#00BA38", "R3" = "#00BFC4", "R4" = "#619CFF", "R5" = "#F564E3", "P" = "#F8766D"),
-                                    Tech = c("10X" = "mediumpurple1", "DLP" = "olivedrab3")), show_annotation_name = F)
-  print(sc_totCN_heatmap(CN_mtx = scDNA_CN_mtx[scDNA_CN_cluster_ids[["R1_2"]],], hclust = F, row_ann = ha_row, probes = all_chr_probes$cum.probes[-1] %>% set_names(nm = c(1:22, "X")), title = "MPNST All \nTotal CN "))
-  dev.off()
+  # png(filename = paste0("MPNST_scDNA_CN_K",run,"_R1_2.png"), width = 4000, height = 1000, res = 200)
+  # 
+  # ha_row = rowAnnotation(df = data.frame(Region = gsub("_.*", "", rownames(scDNA_CN_mtx[scDNA_CN_cluster_ids[["R1_2"]],])),
+  #                                        Tech = gsub(".*_(10X|DLP)_.*", "\\1", rownames(scDNA_CN_mtx[scDNA_CN_cluster_ids[["R1_2"]],]))),
+  #                        col = list(Region = c("R1" = "#B79F00", "R2" = "#00BA38", "R3" = "#00BFC4", "R4" = "#619CFF", "R5" = "#F564E3", "P" = "#F8766D"),
+  #                                   Tech = c("10X" = "mediumpurple1", "DLP" = "olivedrab3")), show_annotation_name = F)
+  # print(sc_totCN_heatmap(CN_mtx = scDNA_CN_mtx[scDNA_CN_cluster_ids[["R1_2"]],], hclust = F, row_ann = ha_row, probes = all_chr_probes$cum.probes[-1] %>% set_names(nm = c(1:22, "X")), title = "MPNST All \nTotal CN "))
+  # dev.off()
   
   R1_2_split <- cutree(hclust(as.dist(1-cor(t(scDNA_CN_mtx[scDNA_CN_cluster_ids[["R1_2"]],]))), method = "ward.D2"), k=2, order_clusters_as_data = F)
   R1_2_sub <- names(R1_2_split[R1_2_split == 1])
   
   #Plot R1 subclone
-  png(filename = paste0("MPNST_scDNA_CN_R1_subclone.png"), width = 4000, height = 1000, res = 200)
-  sc_totCN_heatmap(scDNA_CN_mtx[R1_2_sub,], hclust = F, probes = all_chr_probes$cum.probes[-1] %>% set_names(nm = c(1:22, "X")),
-                   colour_scheme = scDNA_CN_colour)
-  dev.off()
+  # png(filename = paste0("MPNST_scDNA_CN_R1_subclone.png"), width = 4000, height = 1000, res = 200)
+  # sc_totCN_heatmap(scDNA_CN_mtx[R1_2_sub,], hclust = F, probes = all_chr_probes$cum.probes[-1] %>% set_names(nm = c(1:22, "X")),
+  #                  colour_scheme = scDNA_CN_colour)
+  # dev.off()
   
   #Consensus CN mtx
   R1_mode_mtx <- matrix(apply(scDNA_CN_mtx[R1_2_sub,], 2, function(m) {
@@ -122,10 +123,10 @@ if (!file.exists("MPNST_R1_ref_CN.rds")) {
   saveRDS(R1_ref_CN, "MPNST_R1_ref_CN.rds")
   
   #Plot
-  R1_ref_mtx <- matrix(rep(R1_ref_CN$totCN, as.list(R1_ref_CN$n.probes)), nrow = 1)
-  png(filename = paste0("MPNST_scDNA_CN_K",run,"_R1_2_sub_mode.png"), width = 4000, height = 1000, res = 200)
-  sc_totCN_heatmap(R1_ref_mtx, hclust = F, probes = all_chr_probes$cum.probes[-1] %>% set_names(nm = c(1:22, "X")),
-                   colour_scheme = scDNA_CN_colour)
+  # R1_ref_mtx <- matrix(rep(R1_ref_CN$totCN, as.list(R1_ref_CN$n.probes)), nrow = 1)
+  # png(filename = paste0("MPNST_scDNA_CN_K",run,"_R1_2_sub_mode.png"), width = 4000, height = 1000, res = 200)
+  # sc_totCN_heatmap(R1_ref_mtx, hclust = F, probes = all_chr_probes$cum.probes[-1] %>% set_names(nm = c(1:22, "X")),
+  #                  colour_scheme = scDNA_CN_colour)
   # print(pheatmap(mat = R1_ref_mtx, cluster_rows = F, cluster_cols = F,
   #                show_rownames = F, show_colnames = F, color = scDNA_CN_colour, breaks = scDNA_CN_breaks, fontsize = 14, main = "MPNST scDNA Fitted CN Heatmap"))
   # grid.lines(x=chr_probes$cum.probes[1]/ncol(scDNA_CN_mtx)*0.961+0.004, y=c(0.004,0.984), gp=gpar(col="black", lwd=2))
@@ -133,7 +134,7 @@ if (!file.exists("MPNST_R1_ref_CN.rds")) {
   #   grid.lines(x=chr_probes$cum.probes[c+1]/ncol(scDNA_CN_mtx)*0.961+0.004, y=c(0.004,0.984), gp=gpar(col="black", lwd=2))
   #   grid.text(chr_probes$chrom[c+1], x=chr_probes$cum.probes[c]/ncol(scDNA_CN_mtx)*0.961+0.014, y=0.01, gp=gpar(cex = 2))
   # }
-  dev.off()
+  # dev.off()
 } else {
   R1_ref_CN <- readRDS("MPNST_R1_ref_CN.rds")
 }
@@ -157,133 +158,18 @@ if (high_res) {
 
 
 ####################################################################################################################################
-### Part X: The for loop
+### Part 3: Figure 4B
 ####################################################################################################################################
+
+input.dir2 <- paste0(INPUTDIR,"10X_spatial/inferCNV_samples_seg_10X_DLP/")
 
 for (sample in pairs[1:7]) {
   #sample = pairs[1]
-  if (!file.exists(paste0("MPNST_",sample,"_cluster_segmented_mtx",suffix,".rds"))) {
-    #Get CN value at genes
-    obs_mtx <- read.table(paste0("../inferCNV_samples/",sample,"_HMM/infercnv.observations.txt")) #Note not using HMM values, just using the outputs from run with HMM on
-    genes <- rownames(obs_mtx)
-    gene_position <- data.frame(gene = genes) %>% left_join(gencode, by = c("gene" = "gene"))
-    segment_genes <- lapply(1:nrow(all_probes), function(s) {
-      gene_position %>% filter(chr == paste0("chr", ifelse(all_probes[s,"chrom"] == 23, "X", all_probes[s,"chrom"])),
-                               start > all_probes[s,"startpos"], 
-                               end < all_probes[s,"endpos"])
-    })
-    gene_breaks <- data.frame(chr = unique(do.call(rbind, segment_genes)$chr),
-                              total.genes = unlist(lapply(unique(do.call(rbind, segment_genes)$chr), function(c) {
-                                return(nrow(do.call(rbind, segment_genes) %>% filter(chr == c)))
-                              }))) %>% mutate(cum.genes = cumsum(total.genes))
-    #Cluster and plot complete inferCNV heatmap
-    if (!file.exists(paste0("MPNST_",sample,"_cluster_trees.rds"))) {
-      dendrograms <- read.delim(paste0("../inferCNV_samples/", sample, "_HMM/infercnv.observations_dendrogram.txt"), header = F)
-      phylos <- lapply(1:nrow(dendrograms), function(c) {
-        return(read.tree(text = as.character(dendrograms[c,])))
-      })
-      names(phylos) <- unlist(lapply(phylos, function(p) {
-        read.delim(paste0("../inferCNV_samples/", sample, "_HMM/MPNST_",sample,"_annotations.txt"), header = F) %>% filter(V1 == p$tip.label[1]) %>% pull(V2)
-      }))
-      phylos <- phylos[str_sort(names(phylos), numeric = T)]
-      saveRDS(phylos, paste0("MPNST_",sample,"_cluster_trees.rds"))
-    } else {
-      phylos <- readRDS(paste0("MPNST_",sample,"_cluster_trees.rds"))
-    } #Trees don't need to be remade regardless if small clusters are discarded
 
-    #Save clusters
-    if (!file.exists(paste0("MPNST_", sample, "_clusters",suffix,".rds"))) {
-      merge_cluster_ids <- lapply(phylos, function(p) {
-        return(p$tip.label)
-      })
-      #Using clusters direct from seurat
-      merge_cluster_ids <- lapply(levels(MPNST_sp_markers[[which(visium_samples == gsub(".*_", "", sample))]]@active.ident), function(k) {
-        return(names(MPNST_sp_markers[[which(visium_samples == gsub(".*_", "", sample))]]@active.ident[MPNST_sp_markers[[which(visium_samples == gsub(".*_", "", sample))]]@active.ident == k]))
-      })
-      if (rm_small_cluster > 0) {merge_cluster_ids <- merge_cluster_ids[unlist(lapply(merge_cluster_ids, length)) >= rm_small_cluster]}#Only keep clusters with 50 or more spots
-      # if (sample == "R1_Pa") { #cutting clusters for Pa
-      #   cluster_cut <- c("Pa_0", "Pa_2")
-      #   for (c in cluster_cut) {
-      #     merge_cluster_cut <- lapply(unique(cutree(phylos[[c]], k=2, order_clusters_as_data = F)), function(k) {return(names(which(cutree(phylos[[c]], k=2, order_clusters_as_data = F) == k)))})
-      #     names(merge_cluster_cut) <- paste0(c, letters[1:2])
-      #     merge_cluster_ids[[c]] <- NULL
-      #     merge_cluster_ids <- c(merge_cluster_ids, merge_cluster_cut)
-      #   }
-      # }
-      names(merge_cluster_ids) <- paste0(levels(MPNST_sp_markers[[which(visium_samples == gsub(".*_", "", sample))]]@active.ident))
-      # names(merge_cluster_ids) <- paste0(gsub(".*_", "", sample), "_", levels(MPNST_sp_markers[[which(visium_samples == gsub(".*_", "", sample))]]@active.ident))
-      saveRDS(merge_cluster_ids, paste0("MPNST_", sample, "_clusters",suffix,".rds"))
-    } else {
-      merge_cluster_ids <- readRDS(paste0("MPNST_", sample, "_clusters",suffix,".rds"))
-    }
-    
-    #Plot raw heatmap
-    png(filename = paste0("MPNST_", sample, "_merge_cor_ward",suffix,".png"), width = 4000, height = 4000, res = 200)
-    pheatmap(mat = t(obs_mtx)[unlist(merge_cluster_ids),], cluster_rows = F, clustering_distance_rows = "correlation", gaps_row = cumsum(unlist(lapply(merge_cluster_ids, length))),
-             show_rownames = F, show_colnames = F, cluster_cols = F, color = color_scale, fontsize = 14, main = "MPNST Heatmap")
-    dev.off()
-    
-    #Get single spots
-    if (single_spot) {
-      segmented_mtx <- do.call(rbind, pbmclapply(unlist(merge_cluster_ids), function(b) {
-        exp_values <- unlist(lapply(1:length(segment_genes), function(s) {
-          mean_exp <- mean(as.matrix(obs_mtx[segment_genes[[s]]$gene,b]))-1 #Centre around 0
-          adj_exp <- mean_exp * R1_ref_CN[s,"totCN"]/2#Adjust by * CN of R1 of that segment then divide by 2
-          return(adj_exp)
-        }))
-        return(exp_values)
-      }, mc.cores = 32))
-      rownames(segmented_mtx) <- colnames(obs_mtx)
-    } else {
-      #Get mean per cluster per segment
-      segmented_mtx <- do.call(rbind, pbmclapply(1:length(merge_cluster_ids), function(b) {
-        cluster_spots <- merge_cluster_ids[[b]]
-        exp_values <- unlist(lapply(1:length(segment_genes), function(s) {
-          mean_exp <- mean(as.matrix(obs_mtx[segment_genes[[s]]$gene,cluster_spots]))-1 #Centre around 0
-          adj_exp <- mean_exp * R1_ref_CN[s,"totCN"]/2#Adjust by * CN of R1 of that segment then divide by 2
-          return(adj_exp)
-        }))
-        return(exp_values)
-      }, mc.cores = 32))
-      rownames(segmented_mtx) <- names(merge_cluster_ids)
-    }
-    
-    #Convert as % change from baselne?
-    saveRDS(segmented_mtx, paste0("MPNST_",sample,"_cluster_segmented_mtx",suffix,".rds"))
+  segmented_mtx <- readRDS(paste0(input.dir2,"MPNST_",sample,"_cluster_segmented_mtx",suffix,".rds"))
+  phylos <- readRDS(paste0(input.dir2,"MPNST_",sample,"_cluster_trees",suffix,".rds"))
+  merge_cluster_ids <- readRDS(paste0(input.dir2,"MPNST_", sample, "_clusters",suffix,".rds"))
 
-    #Make discretized plots
-    if (single_spot) {
-      segmented_plot_mtx <- do.call(rbind, lapply(1:nrow(segmented_mtx), function(b) {
-        unlist(lapply(1:ncol(segmented_mtx), function(s) {
-          rep(unname(segmented_mtx[b,s]), nrow(segment_genes[[s]]))
-        }))
-      }))
-    } else {
-      segmented_plot_mtx <- do.call(rbind, rep(lapply(1:nrow(segmented_mtx), function(b) {
-        unlist(lapply(1:ncol(segmented_mtx), function(s) {
-          rep(unname(segmented_mtx[b,s]), nrow(segment_genes[[s]]))
-        }))
-      }), lapply(merge_cluster_ids, function(c) length(c)/10)))
-    }  
-
-    #Plot
-    png(filename = paste0("MPNST_Visium_infercnv_cluster_segmented_heatmap_",sample,suffix,".png"), width = 4000, height = 4000, res = 200)
-    pheatmap(mat = segmented_plot_mtx, cluster_rows = F, cluster_cols = F, gaps_col = gene_breaks$cum.genes,
-             show_rownames = F, show_colnames = F, color = color_scale, breaks = scRNA_adj_mtx_breaks, fontsize = 14, main = "MPNST Visium InferCNV Segmented Heatmap")
-    dev.off()
-    
-    #Convert to integer CN state
-    discretized_mtx <- disc_mtx(segmented_plot_mtx, breaks = discretize_breaks, labels = discretize_labels)
-    
-    png(filename = paste0("MPNST_Visium_infercnv_cluster_discretized_heatmap_",sample,suffix,".png"), width = 4000, height = 2000, res = 200)
-    Visium_heatmap(discretized_mtx, hclust = F, row_split = factor(rep(names(merge_cluster_ids), unlist(lapply(merge_cluster_ids, length))/10), levels = names(merge_cluster_ids)),
-                   probes = gene_breaks$cum.genes %>% set_names(nm = c(1:22, "X")))
-    dev.off()
-  } else {
-    segmented_mtx <- readRDS(paste0("MPNST_",sample,"_cluster_segmented_mtx",suffix,".rds"))
-    phylos <- readRDS(paste0("MPNST_",sample,"_cluster_trees",suffix,".rds"))
-    merge_cluster_ids <- readRDS(paste0("MPNST_", sample, "_clusters",suffix,".rds"))
-  }
   
   #Generate integer CN matrix
   #Convert segmented mtx to medicc input 
@@ -303,12 +189,19 @@ for (sample in pairs[1:7]) {
   #Plot
   if (!file.exists(paste0("MPNST_Visium_infercnv_cluster_totCN_heatmap_",sample,suffix,".png"))) {
     png(filename = paste0("MPNST_Visium_infercnv_cluster_totCN_heatmap_",sample,suffix,".png"), width = 4000, height = 2000, res = 200)
-    sc_totCN_heatmap(medicc_totCN_plot_mtx, hclust = F, row_split = factor(rep(names(merge_cluster_ids), unlist(lapply(merge_cluster_ids, length))/10), levels = names(merge_cluster_ids)),
+    sc_totCN_heatmap2(medicc_totCN_plot_mtx, hclust = F, row_split = factor(rep(names(merge_cluster_ids), unlist(lapply(merge_cluster_ids, length))/10), levels = names(merge_cluster_ids)),
                      probes = all_chr_probes$cum.probes[-1] %>% set_names(nm = c(1:22, "X")), column_title = NA,
                      colour_scheme = scDNA_CN_colour)
     dev.off()
   }
   
+}
+
+####################################################################################################################################
+### Part 4: 
+####################################################################################################################################
+
+if (T) {
   #Run medicc (using infered total CN) only for clusters (not single spots)
   if (F & !single_spot) {
     no_wgd <- F 
@@ -397,10 +290,6 @@ for (sample in pairs[1:7]) {
       return(clusters)
     }))
     #Plot
-    # png(filename = paste0("MPNST_", sample, "_spatialplot_subclones",suffix,".png"), width = 2000, height = 2000, res = 200)
-    # print(SpatialPlot(MPNST_sp_markers[[which(visium_samples == gsub(".*_", "", sample))]], group.by = "subclone", pt.size.factor = 1.2) +
-    #         geom_point(data = subclone_locations, mapping = aes(x = imagecol, y = imagerow, fill = cluster_name), shape = 21, size = 10, inherit.aes = F) + theme(legend.position = "right"))
-    # dev.off()
     pdf(file = paste0("MPNST_", sample, "_spatialplot_subclones",suffix,".pdf"), width = 7, height = 7)
     print(SpatialPlot(MPNST_sp_markers[[which(visium_samples == gsub(".*_", "", sample))]], group.by = "subclone", pt.size.factor = 1.2, stroke = NA) +
             geom_point(data = subclone_locations, mapping = aes(x = imagecol, y = imagerow, color = cluster_name), shape = 16, size = 8, inherit.aes = F, show.legend = F) +
@@ -461,13 +350,7 @@ for (sample in pairs[1:7]) {
     spot_colors <- c("navy", NA, hcl(h = seq(15, 375, length = length(unique(MPNST_sp_markers[[which(visium_samples == gsub(".*_", "", sample))]]$subclone)) + 1), l = 65, c = 100) %>% head(-1))
     names(spot_colors) <- c("MRCA", "Node", sort(unique(MPNST_sp_markers[[which(visium_samples == gsub(".*_", "", sample))]]$subclone)))
     
-    #Plot points on image
-    # png(filename = paste0("MPNST_", sample, "_spatialplot_subclones_tree",suffix,".png"), width = 2000, height = 2000, res = 200)
-    # print(SpatialPlot(MPNST_sp_markers[[which(visium_samples == gsub(".*_", "", sample))]], group.by = "subclone", pt.size.factor = 1.2) + labs(color = "Type") + 
-    #         geom_point(data = edges_ggplot, mapping = aes(x = coord.x, y = coord.y, color = type), shape = 16, size = 10, inherit.aes = F) + scale_color_manual(values = spot_colors) + 
-    #         geom_path(data = edges_ggplot %>% arrange(edge, desc(direction)), mapping = aes(x = coord.x, y = coord.y, group = edge), arrow = arrow(length=unit(20,"pt")), colour = "navy", size = 1, inherit.aes = F) + 
-    #         theme(legend.position = "right"))
-    # dev.off()
+
     pdf(file = paste0("MPNST_", sample, "_spatialplot_subclones_tree",suffix,".pdf"), width = 7, height = 7)
     print(SpatialPlot(MPNST_sp_markers[[which(visium_samples == gsub(".*_", "", sample))]], group.by = "subclone", pt.size.factor = 1.2, stroke = NA) + labs(color = "Subclone") + scale_fill_manual(values = spot_colors[-c(1:2)], guide = "none") +
             geom_point(data = edges_ggplot, mapping = aes(x = coord.x, y = coord.y, color = type), shape = 16, size = 8, inherit.aes = F) + scale_color_manual(values = spot_colors) + 
