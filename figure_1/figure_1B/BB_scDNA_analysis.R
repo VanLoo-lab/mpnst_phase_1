@@ -1,5 +1,6 @@
 ### title: plotting subclonal CN profiles from the Battenberg algorithm
 # the code generates Figure 1B in the manuscript (as well as other outputs)
+# this file was previously named "BB_scDNA_analysis.R"
 
 ### To run the code:
 # (1) Make sure to load SessionInfo() for correct package version 
@@ -911,7 +912,7 @@ if (T) {
 ### Part 5: Add scDNA to plots
 ####################################################################################################################################
 
-if (T) {
+if (F) {
   #Set % of cells to be considered subclone
   subclone_threshold <- 0.25
   
