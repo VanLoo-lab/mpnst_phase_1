@@ -131,7 +131,7 @@ for (sample in pairs[1:7]) {
         
         locations_all <- GetTissueCoordinates(MPNST_sp_markers[[which(visium_samples == gsub(".*_", "", sample))]]) %>% rownames_to_column(var = "spot") %>%
           mutate(imagerow = max_imagerow+min_imagerow-imagerow) %>%
-          left_join(unnest(enframe(merge_cluster_ids)), by = c("spot" = "value")) %>% rename("Cluster" = "name")
+          left_join(unnest(enframe(merge_cluster_ids)), by = c("spot" = "value")) %>% dplyr::rename("Cluster" = "name")
         
         subclone_locations <- do.call(rbind, lapply(names(merge_cluster_ids), function (c) {
           locations <- locations_all %>% filter(Cluster == c)

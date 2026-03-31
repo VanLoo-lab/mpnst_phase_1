@@ -138,12 +138,12 @@ totCN_mtx_clean <- scDNA_CN_mtx[c(unlist(scDNA_CN_cluster_ids),scDNA_normal_ids)
 
 
 ####################################################################################################################################
-### Make the UMAPs
+### Part 2: Make the UMAPs
 ####################################################################################################################################
 
 ### Define UMAP axes through scDNA_umap
 umap_plot <- scDNA_umap[["layout"]] %>% as.data.frame() %>% 
-  rename("UMAP1" = "V1", "UMAP2" = "V2") %>% 
+  dplyr::rename("UMAP1" = "V1", "UMAP2" = "V2") %>% 
   rownames_to_column("barcode") %>%
   mutate(Region = gsub("_.*", "", rownames(totCN_mtx_clean)), Section = " ") %>% 
   left_join(cluster_ids, by = "barcode")
