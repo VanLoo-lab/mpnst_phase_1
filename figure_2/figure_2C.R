@@ -1,4 +1,4 @@
-### title: Plot selected LCM subtree figures from the single-cell MEDICC tree
+### title: Plot scDNA MEDICC2 tree with mapped LCM spots
 
 # Define the zenodo repository containing input and output folders
 zenodo.dir <- "~/Documents/GitHub/MPNST-Zenodo/"
