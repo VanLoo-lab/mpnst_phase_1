@@ -22,6 +22,7 @@ library(gridExtra)
 library(tidytree)
 library(jpeg)
 
+
 ####################################################################################################################################
 ### Part 1: Inline metadata (minimal subset for T4.1 LCM analysis)
 ####################################################################################################################################
@@ -168,36 +169,21 @@ for (side_name in sides) {
 		parent = all[medicc_LCM_tree[["edge"]][,1]],
 		child = all[medicc_LCM_tree[["edge"]][,2]],
 		length = medicc_LCM_tree[["edge.length"]]
-	) %>%
-		left_join(
-			LCM_coordinates_tumour %>%
-				filter(side == side_map[[side_name]]) %>%
-				select(sample, coord.x, coord.y) %>%
-				distinct(),
-			by = c("child" = "sample")
-		) %>%
+	) %>% left_join(LCM_coordinates_tumour %>% select(sample, coord.x, coord.y), by = c("child" = "sample")) %>%
 		filter(str_detect(child, "diploid", negate = TRUE)) %>%
 		mutate(edge = 1:nrow(.))
 	
-	# Iterate to fill in coordinates for internal nodes
-	max_iterations <- 100
-	iteration <- 0
-	while(any(is.na(edges$coord.x)) && iteration < max_iterations) {
-		for (i in 1:nrow(edges)) {
-			node <- edges[i, "parent"]
-			children <- edges %>% filter(parent == node) %>% pull(child)
-			
-			if (length(children) >= 2) {
-				child_x_vals <- edges %>% filter(child %in% children) %>% pull(coord.x) %>% na.omit()
-				child_y_vals <- edges %>% filter(child %in% children) %>% pull(coord.y) %>% na.omit()
-				
-				if (length(child_x_vals) >= 2) {
-					edges[edges$child == node, "coord.x"] <- mean(child_x_vals)
-					edges[edges$child == node, "coord.y"] <- mean(child_y_vals)
-				}
-			}
+	# Iterate through to add locations
+	while(any(is.na(edges))) {
+		for(i in 1:nrow(print(edges))) {
+			node = edges[i,"parent"]
+			children = edges %>% filter(parent == node) %>% pull(child)
+			edges[edges$child == node,"coord.x"] <- ifelse(any(is.na(edges %>% filter(child %in% children))), NA,
+													   (edges %>% filter(child == children[1]) %>% pull(coord.x) + edges %>% filter(child == children[2]) %>% pull(coord.x))/2)
+			edges[edges$child == node,"coord.y"] <- ifelse(any(is.na(edges %>% filter(child %in% children))), NA,
+													   (edges %>% filter(child == children[1]) %>% pull(coord.y) + edges %>% filter(child == children[2]) %>% pull(coord.y))/2)
 		}
-		iteration <- iteration + 1
+		print(edges)
 	}
 	
 	####################################################################################################################################
@@ -208,22 +194,18 @@ for (side_name in sides) {
 	edges_adj <- edges
 	
 	for (i in nrow(edges):1) {
-		current_node <- edges_adj[i, "child"]
-		if (grepl("internal", current_node)) {
+		current_node <- edges_adj[i,"child"]
+		if(grepl("internal", current_node)) {
 			child_x <- edges_adj[edges_adj[, "child"] == current_node, "coord.x"]
 			child_y <- edges_adj[edges_adj[, "child"] == current_node, "coord.y"]
-			
 			parent_node <- edges_adj[edges_adj[, "child"] == current_node, "parent"]
-			if (parent_node != "root" && !is.na(child_x)) {
+			if (parent_node != "root") {
 				parent_x <- edges_adj[edges_adj[, "child"] == parent_node, "coord.x"]
 				parent_y <- edges_adj[edges_adj[, "child"] == parent_node, "coord.y"]
-				
-				if (!is.na(parent_x)) {
-					adj_x <- child_x + (parent_x - child_x) * pct_adj
-					adj_y <- child_y + (parent_y - child_y) * pct_adj
-					edges_adj[edges_adj[, "child"] == current_node, "coord.x"] <- adj_x
-					edges_adj[edges_adj[, "child"] == current_node, "coord.y"] <- adj_y
-				}
+				adj_x <- child_x + (parent_x-child_x)*pct_adj
+				adj_y <- child_y + (parent_y-child_y)*pct_adj
+				edges_adj[edges_adj[, "child"] == current_node, "coord.x"] <- adj_x
+				edges_adj[edges_adj[, "child"] == current_node, "coord.y"] <- adj_y
 			}
 		}
 	}
@@ -288,15 +270,19 @@ for (side_name in sides) {
 	
 	# Plot overlay on LCM image if available
 	if (!is.null(LCM_image_jpg[[sample_label]])) {
+		plot_points <- edges_ggplot_col %>%
+			filter(!is.na(unique_id))
+		output_file <- paste0("figure_2E_image_", side_suffix, ".png")
+		
 		png(
-			filename = paste0("figure_2E_image_", side_suffix, ".png"),
+			filename = output_file,
 			width = 6000, height = 6000, res = 200
 		)
 		
-		print(edges_ggplot_col %>%
+		print(plot_points %>%
 			ggplot(aes(x = coord.x, y = coord.y)) +
 			annotation_raster(
-				LCM_image_jpg[[sample_label]],
+				LCM_image_jpg[[grep(gsub("_", "_.*", sample_label), names(LCM_image_jpg))]],
 				xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf
 			) +
 			geom_point(size = 30, aes(color = unique_id)) +
@@ -318,6 +304,7 @@ for (side_name in sides) {
 			)
 		)
 		dev.off()
+		normalize_png_output(output_file)
 	}
 	
 	####################################################################################################################################
@@ -352,10 +339,6 @@ for (side_name in sides) {
 }
 
 cat("\n=== Figure generation complete ===\n")
-
-
-
-
 
 
 
