@@ -192,7 +192,7 @@ for (sample in c("R4", "P", "R1")) {
 	y_lower <- min(sub_df$y, na.rm = TRUE) - 100
 
 	pdf(
-		file = paste0(output.dir, "SNV_medicc_10X_", tree, "_tree_ggtree_scale", scaling_ratio, "_sized_nodelab_reorder_LCM_", sample, ".pdf"),
+		file = paste0(output.dir, "figure_2C_", sample, ".pdf"),
 		width = 10,
 		height = plot_height
 	)

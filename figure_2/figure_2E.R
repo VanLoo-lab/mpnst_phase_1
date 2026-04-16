@@ -97,6 +97,7 @@ image_paths_found <- c()
 
 for (side_name in sides) {
 	sample_label <- paste0(region_name, "_", side_name)
+	side_suffix <- tolower(side_name)
 	img_name <- LCM_images_list[[sample_label]]
 	
 	# Try multiple possible paths for the images
@@ -128,6 +129,7 @@ run_name <- "wgd"
 
 for (side_name in sides) {
 	sample_label <- paste0(region_name, "_", side_name)
+	side_suffix <- tolower(side_name)
 	
 	# Construct the tree file path
 	alt_tree_paths <- c(
@@ -287,7 +289,7 @@ for (side_name in sides) {
 	# Plot overlay on LCM image if available
 	if (!is.null(LCM_image_jpg[[sample_label]])) {
 		png(
-			filename = paste0("MPNST_", tumour_name, "_", sample_label, "_medicc_overlay_adj_col.png"),
+			filename = paste0("figure_2E_image_", side_suffix, ".png"),
 			width = 6000, height = 6000, res = 200
 		)
 		
@@ -333,7 +335,7 @@ for (side_name in sides) {
 	]
 	
 	pdf(
-		file = paste0("MPNST_", tumour_name, "_", sample_label, "_medicc_ggtree_col.pdf"),
+		file = paste0("figure_2E_tree_", side_suffix, ".pdf"),
 		width = 3, height = 7
 	)
 	
