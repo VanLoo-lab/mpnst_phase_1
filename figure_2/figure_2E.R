@@ -244,7 +244,7 @@ for (side_name in sides) {
 		left_join(edges_adj[, c(2, 7)], by = "child")
 	
 	# Adjust MRCA position
-	adj_distance <- 15
+	adj_distance <- 5
 	orig_mrca_pos <- c(
 		edges_ggplot %>% filter(direction == "end", type == "MRCA") %>% pull(coord.x),
 		edges_ggplot %>% filter(direction == "end", type == "MRCA") %>% pull(coord.y)
@@ -304,7 +304,7 @@ for (side_name in sides) {
 			)
 		)
 		dev.off()
-		normalize_png_output(output_file)
+		output_file
 	}
 	
 	####################################################################################################################################
@@ -339,7 +339,6 @@ for (side_name in sides) {
 }
 
 cat("\n=== Figure generation complete ===\n")
-
 
 
 
