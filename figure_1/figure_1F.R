@@ -25,8 +25,7 @@ bulk_SNV_consensus_clusters <- readRDS(paste0(input.dir,"bulk/DPClust/MPNST_1_co
 
 ### Load number SNVs from subclone tree
 filter_n_cells <- 2 #SNVs with less than or equal to filter_n_cells cell removed
-CN_based_SNV_clusters_ids <- readRDS(paste0(input.dir,"bulk/SNV_analysis/MPNST_all_sub_clonal_SNV_G1000filtered_clusters_ex_WGD_N_ids_32.rds"))
-CN_based_SNV_clusters_sizes <- unlist(lapply(CN_based_SNV_clusters_ids, length))
+CN_based_SNV_clusters_sizes <- readRDS(paste0(input.dir,"bulk/SNV_analysis/MPNST_all_sub_clonal_SNV_G1000filtered_cluster_sizes_ex_WGD_N_ids_32.rds"))
 
 ### Load k-means cluster info for scDNA-seq
 K <- 22
