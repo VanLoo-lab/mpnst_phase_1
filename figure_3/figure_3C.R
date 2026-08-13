@@ -32,8 +32,9 @@ K = 24
 ### =========================     
 color_scale <- colorRampPalette(c("darkblue", "white", "darkred"))(100)
 png(filename = paste0(output.dir,"figure_3C.png"), width = 4000, height = 4000, res = 200)
-pheatmap(mat = MPNST_obs_merge, cluster_rows = MPNST_hclust_cor_ward, clustering_distance_rows = "correlation", 
-         show_rownames = F, show_colnames = F, cutree_rows = K, cluster_cols = F, color = color_scale, fontsize = 14, main = "MPNST Heatmap")
+pheatmap(mat = MPNST_obs_merge, cluster_rows = MPNST_hclust_cor_ward, clustering_distance_rows = "correlation",
+         show_rownames = F, show_colnames = F, cutree_rows = K, cluster_cols = F, color = color_scale, fontsize = 14, main = "MPNST Heatmap",
+         raster_device = "agg_png")
 dev.off()
 
 ### =========================

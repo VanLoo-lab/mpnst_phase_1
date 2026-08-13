@@ -20,6 +20,7 @@ library(Seurat)
 library(SeuratObject)
 library(ggplot2)
 library(ggrepel)
+library(dplyr)
 
 seurat_obj<-readRDS(paste0(input.dir,"/MPNST_C_updated.rds"))
                     
