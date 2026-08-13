@@ -4,7 +4,7 @@
 ### Part 0: Define input and output directories
 ####################################################################################################################################
 
-zenodo.dir <- normalizePath("~/Documents/GitHub/MPNST-Zenodo", mustWork = FALSE)
+zenodo.dir <- "/rsrch9/home/genetics/vanloolab/data/MPNST/phase1/260810_zenodo/MPNST-Zenodo"
 input.dir <- file.path(zenodo.dir, "data")
 output.dir <- file.path(zenodo.dir, "results", "figure_2")
 dir.create(output.dir, recursive = TRUE, showWarnings = FALSE)

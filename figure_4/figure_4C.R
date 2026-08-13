@@ -1,7 +1,7 @@
 ### title: UMAP of 10X scDNA total CN profiles and projection of Visium total CN profiles
 
 # Define the zenodo repository containing input and output folders
-zenodo.dir <- "~/Documents/GitHub/MPNST-Zenodo/"
+zenodo.dir <- "/rsrch9/home/genetics/vanloolab/data/MPNST/phase1/260810_zenodo/MPNST-Zenodo/"
 
 # Define input directory with data and output directory to save the figure
 input.dir <- paste0(zenodo.dir, "data/")
@@ -31,7 +31,7 @@ K=22
 scDNA_CN_cluster_ids <- readRDS(paste0(input.dir, "scDNA/CN_profiles/MPNST_all_k_means_K",K,"_clusters.rds"))
 
 ### Load CN profiles from inferCNV
-visium.infercnv.dir <- paste0(input.dir, "spRNA/infercnv/")
+visium.infercnv.dir <- paste0(input.dir, "spRNA/inferCNV/")
 # loaded into object segmented_mtx by sample in the for loop below
 
 ### Load stored UMAP

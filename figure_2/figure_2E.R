@@ -1,7 +1,7 @@
 ### title: Plot LCM MEDICC2 trees with mapped spots for T4.1 region sides
 
 # Define the zenodo repository containing input and output folders
-zenodo.dir <- "~/Documents/GitHub/MPNST-Zenodo/"
+zenodo.dir <- "/rsrch9/home/genetics/vanloolab/data/MPNST/phase1/260810_zenodo/MPNST-Zenodo/"
 
 # Define input and output directories
 input.dir <- paste0(zenodo.dir, "data/")

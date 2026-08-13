@@ -4,7 +4,7 @@
 ################################################################################
 
 # Define the zenodo repository containing input and output folders
-zenodo.dir <- "~/Documents/GitHub/MPNST-Zenodo/"
+zenodo.dir <- "/rsrch9/home/genetics/vanloolab/data/MPNST/phase1/260810_zenodo/MPNST-Zenodo/"
 # Define input directory with data and output directory to save the figure
 input.dir <- paste0(zenodo.dir, "data/snRNA")
 output.dir <- paste0(zenodo.dir, "results/figure_3/")
@@ -19,7 +19,7 @@ library(Seurat)
 library(SeuratObject)
 library(ggplot2)
 library(ggrepel)
-seurat_obj<-readRDS("/Users/ycheng3/Projects/MPNST_phase1/data/MPNST_C_updated.rds")
+seurat_obj<-readRDS(paste0(input.dir, "/seurat_objects/MPNST_C_updated.rds"))
 
 ### =========================
 ### 1. keep only clusters 8, 9, 10, 11

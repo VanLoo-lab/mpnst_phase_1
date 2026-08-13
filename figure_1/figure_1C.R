@@ -1,7 +1,7 @@
 ### title: plotting clustered subclonal architecture based on CCF values
 
 # Define the zenodo repository containing input and output folders
-zenodo.dir <- "~/Documents/GitHub/MPNST-Zenodo/"
+zenodo.dir <- "/rsrch9/home/genetics/vanloolab/data/MPNST/phase1/260810_zenodo/MPNST-Zenodo/"
 
 # Define input directory with data and output directory to save the figure
 input.dir <- paste0(zenodo.dir, "data/bulk/CCF_clustering/")
