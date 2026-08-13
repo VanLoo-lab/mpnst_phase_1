@@ -19,7 +19,7 @@ library(Seurat)
 library(SeuratObject)
 library(ggplot2)
 library(ggrepel)
-seurat_obj<-readRDS("/Users/ycheng3/Projects/MPNST_phase1/data/MPNST_C_updated.rds")
+seurat_obj<-readRDS(paste0(input.dir,"/seurat_objects/MPNST_C_updated.rds"))
 
 ### =========================
 ### 1. keep only clusters 8, 9, 10, 11
