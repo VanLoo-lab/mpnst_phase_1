@@ -2,6 +2,13 @@
 
 # Shareable installer for the MPNST phase 1 repository.
 #
+# Environment information for the reference install:
+# - Linux server environment (RHEL 8)
+# - R 4.5.2
+# - Bioconductor 3.22
+# - Repo-local Zenodo data already pre-downloaded at checkout time
+# - Local project library: ./library/MPNST_phase1_zenodo
+#
 # Notes:
 # - Uses a repo-local library under ./library/MPNST_phase1_zenodo
 # - Installs CRAN packages and Bioconductor packages into that library
