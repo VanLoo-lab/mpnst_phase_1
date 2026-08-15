@@ -1,5 +1,5 @@
-# Chromosomal instability drives spatial and temporal phenotypic diversity in Schwann cancer cells
-This repository contains code for the figures in the manuscript "Chromosomal instability drives spatial and temporal phenotypic diversity in Schwann cancer cells".
+# Chromosomal instability shapes spatial and temporal phenotypic diversity in a malignant peripheral nerve sheath tumour
+This repository contains code for the figures in the manuscript "Chromosomal instability shapes spatial and temporal phenotypic diversity in a malignant peripheral nerve sheath tumour".
 
 The code for each main figure has its own folder:
 - **figure_1**
