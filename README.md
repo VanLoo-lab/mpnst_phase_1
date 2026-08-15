@@ -21,6 +21,6 @@ Alternatively, install the latest CRAN/Bioconductor versions of the packages lis
 
 1. Download the processed data from Zenodo: https://zenodo.org/records/19653314
 2. In each script, set `zenodo.dir` to the local path where you downloaded the Zenodo data (it should contain `data/` and `results/` subfolders).
-3. Run the scripts in a folder (e.g. `figure_1/figure_1B.R`) individually in R/RStudio; each script writes its output figure to `results/figure_N/` within the Zenodo directory.
+3. Run the scripts in a folder (e.g. `figure_1/figure_1B.R`) individually in R/RStudio; each script writes its output figure to `results/figure_N/` within the Zenodo directory. The total estimated run time is less than 30 minutes (Apple Silicon Mac, R 4.5.1, Zenodo data pre-downloaded locally).
 
 Raw sequencing data (EGA) are not required to reproduce the figures — the Zenodo data already contains the processed inputs.
